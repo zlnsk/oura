@@ -1,0 +1,17 @@
+{
+  "name": "Oura Analytics | Premium Health Dashboard",
+  "short_name": "Oura",
+  "start_url": "/Oura",
+  "scope": "/Oura",
+  "display": "standalone",
+  "theme_color": "#111116",
+  "background_color": "#111116",
+  "icons": [
+    {
+      "src": "/Oura/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
