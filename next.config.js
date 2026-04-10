@@ -14,6 +14,7 @@ function getBuildVersion() {
 
 /** @type {import("next").NextConfig} */
 const nextConfig = {
+  serverExternalPackages: ["shared-auth"],
   basePath: "/Oura",
   env: {
     NEXT_PUBLIC_BUILD_VERSION: getBuildVersion(),
@@ -46,8 +47,8 @@ const nextConfig = {
               'style-src \'self\' \'unsafe-inline\' https://fonts.googleapis.com',
               "font-src 'self' https://fonts.gstatic.com",
               "img-src 'self' data: blob: https://lh3.googleusercontent.com",
-              "connect-src 'self' https://api.ouraring.com https://api.anthropic.com https://wbsapi.withings.net https://account.withings.com https://accounts.google.com",
-              "frame-src 'self' https://accounts.google.com",
+              "connect-src 'self' https://api.ouraring.com https://api.anthropic.com https://wbsapi.withings.net https://account.withings.com https://accounts.google.com https://app.pangolin.net",
+              "frame-src 'self' https://accounts.google.com https://app.pangolin.net",
               "manifest-src 'self'",
               "object-src 'none'",
               "worker-src 'self'",

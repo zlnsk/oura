@@ -14,7 +14,7 @@ export const metadata: Metadata = {
   description: "Comprehensive Oura Ring data analytics and AI-powered insights",
   icons: { icon: "/icon.svg", apple: "/icon.svg" },
   manifest: "/Oura/manifest.json",
-  metadataBase: new URL(process.env.NEXTAUTH_URL || "http://localhost:3000/Oura"),
+  metadataBase: process.env.NEXT_PUBLIC_APP_URL ? new URL(process.env.NEXT_PUBLIC_APP_URL) : undefined,
   appleWebApp: {
     capable: true,
     statusBarStyle: "black-translucent",

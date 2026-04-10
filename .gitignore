@@ -1,14 +1,48 @@
-node_modules/
-.next/
-.env
-.env.local
-.env.production.local
-ecosystem.config.js
-.withings-tokens.json
-.proxy-rate-limit.json
-.rate-limit-store.json
-*.log
+# dependencies
+/node_modules
+/.pnp
+.pnp.js
+.yarn/install-state.gz
+
+# testing
+/coverage
+
+# next.js
+/.next/
+/out/
+
+# production
+/build
+
+# misc
 .DS_Store
+*.pem
+
+# debug
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# local env files
+.env*.local
+.env
+
+# typescript
 *.tsbuildinfo
 next-env.d.ts
+.rate-limit-store.json
+.proxy-rate-limit.json
 public/buildInfo.json
+
+# secrets / local config
+ecosystem.config.js
+ecosystem.config.cjs
+.env
+.env.local
+.env.production*
+.proxy-rate-limit.json
+node_modules/
+.next/
+out/
+*.log
+.DS_Store
