@@ -97,6 +97,12 @@ async function checkRateLimit(
 }
 
 export async function POST(req: NextRequest) {
+  if (!OPENROUTER_API_KEY) {
+    return NextResponse.json(
+      { error: "AI summary is not configured on this server" },
+      { status: 503 }
+    );
+  }
 
   // Validate request body size by reading the actual body (not trusting Content-Length header)
   let rawBody: string;
@@ -117,7 +123,7 @@ export async function POST(req: NextRequest) {
   }
 
   // Rate limit per user (hash PII before using as key)
-  const userEmail = req.headers.get("x-user-email");
+  const userEmail = req.headers.get("x-user-email") || req.headers.get("remote-email");
   const rateLimitKey = hashKey(userEmail || `ip:${getClientIP(req.headers) || "unknown"}`);
   const { allowed, remaining } = await checkRateLimit(rateLimitKey);
   if (!allowed) {
@@ -169,7 +175,7 @@ export async function POST(req: NextRequest) {
       headers: {
         "Content-Type": "application/json",
         "Authorization": `Bearer ${OPENROUTER_API_KEY}`,
-        "X-Title": "Oura",
+        "X-Title": "Oura", "HTTP-Referer": process.env.NEXT_PUBLIC_APP_URL || "",
       },
       body: JSON.stringify({
         model: "openrouter/auto",

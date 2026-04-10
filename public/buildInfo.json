@@ -1,0 +1,19 @@
+{
+  "buildNumber": 11,
+  "buildDate": "2026-03-27T19:00:00Z",
+  "version": "1.3.0",
+  "builds": [
+    {"number": 11, "date": "2026-03-27", "description": "Status bar, OnboardingGuard integration, missing changes applied"},
+    {"number": 10, "date": "2026-03-27", "description": "basePath self-hosted deployment support"},
+    {"number": 9, "date": "2026-03-27", "description": "Fix basePath and NextAuth cookie config for /Oura hosting"},
+    {"number": 8, "date": "2026-03-27", "description": "Fix login error for subpath hosting at /oura"},
+    {"number": 7, "date": "2026-03-27", "description": "Comprehensive quality, performance, and security improvements"},
+    {"number": 6, "date": "2026-03-26", "description": "Premium UI audit implementation"},
+    {"number": 5, "date": "2026-03-26", "description": "Material 3 UI modernization"},
+    {"number": 4, "date": "2026-03-26", "description": "Production improvements"},
+    {"number": 3, "date": "2026-03-26", "description": "Test suite"},
+    {"number": 2, "date": "2026-03-26", "description": "README and docs"},
+    {"number": 1, "date": "2026-03-24", "description": "Initial dashboard"},
+    {"number": 0, "date": "2026-03-24", "description": "Project setup"}
+  ]
+}

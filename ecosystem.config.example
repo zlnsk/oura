@@ -1,0 +1,36 @@
+module.exports = {
+  apps: [{
+    name: "Oura",
+    script: "node_modules/.bin/next",
+    args: "start -p 3005",
+    cwd: "/opt/apps/Oura",
+    watch: false,
+    autorestart: true,
+    max_restarts: 10,
+    max_memory_restart: "256M",
+    env: {
+      NODE_ENV: "production",
+      NEXT_PUBLIC_APP_URL: "https://your-domain.example.com/Oura",
+
+      // OTP / shared-auth (JMAP noreply + session HMAC)
+      OTP_JMAP_URL: "http://jmap.example.internal:8080",
+      OTP_JMAP_USER: "noreply",
+      OTP_JMAP_PASS: "REPLACE_WITH_JMAP_PASSWORD",
+      OTP_FROM_EMAIL: "noreply@your-domain.example.com",
+      OTP_SESSION_SECRET: "REPLACE_WITH_BASE64_32BYTE_SECRET",
+      OTP_SESSION_HOURS: "8",
+      OTP_INTERNAL_API_KEY: "REPLACE_WITH_HEX_64_INTERNAL_KEY",
+      OTP_ALLOWED_EMAILS: "you@example.com",
+
+      // Oura personal access token (https://cloud.ouraring.com/personal-access-tokens)
+      OURA_TOKEN: "REPLACE_WITH_OURA_PERSONAL_ACCESS_TOKEN",
+
+      // OpenRouter AI summaries (https://openrouter.ai)
+      OPENROUTER_API_KEY: "REPLACE_WITH_OPENROUTER_KEY",
+
+      // Withings OAuth (optional)
+      WITHINGS_CLIENT_ID: "REPLACE_WITH_WITHINGS_CLIENT_ID",
+      WITHINGS_CLIENT_SECRET: "REPLACE_WITH_WITHINGS_CLIENT_SECRET"
+    }
+  }]
+};

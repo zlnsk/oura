@@ -105,7 +105,7 @@ export async function GET(req: NextRequest) {
   }
 
   // Rate limit per user (hash PII before using as key)
-  const email = req.headers.get("x-user-email");
+  const email = req.headers.get("x-user-email") || req.headers.get("remote-email");
   const rateLimitKey = hashKey(email || `ip:${getClientIP(req.headers) || "unknown"}`);
   if (!(await checkProxyRateLimit(rateLimitKey))) {
     audit("rate_limit.hit", email || "anonymous", {
