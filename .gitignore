@@ -46,3 +46,8 @@ node_modules/
 out/
 *.log
 .DS_Store
+
+# backup files
+*.bak
+*.bak[0-9]
+*.pre-otp
