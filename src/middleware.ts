@@ -37,6 +37,19 @@ async function verifySessionEdge(token: string, secret: string): Promise<{ email
 
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
+  // Verify request came through Caddy reverse proxy
+  const proxySecret = process.env.PROXY_SECRET;
+  if (proxySecret) {
+    const got = request.headers.get("x-proxy-secret") || "";
+    if (got !== proxySecret) {
+      return new NextResponse(JSON.stringify({ error: "Forbidden" }), {
+        status: 403,
+        headers: { "Content-Type": "application/json" },
+      });
+    }
+  }
+
+
 
   // Bypass auth endpoints, NextAuth (Withings/Oura OAuth), static assets
   if (

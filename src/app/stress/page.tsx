@@ -77,7 +77,7 @@ export default function StressPage() {
             />
             <StatCard
               label="Avg Recovery"
-              value={average(stress.map((s) => s.recovery_high || 0))}
+              value={average(stress.map((s) => Math.round((s.recovery_high || 0) / 60)))}
               unit="min"
               icon={Shield}
               color={COLORS.optimal}
@@ -86,7 +86,12 @@ export default function StressPage() {
               label="Avg SpO2"
               value={
                 spo2.length
-                  ? average(spo2.map((s) => s.spo2_percentage?.average || 0))
+                  ? parseFloat(
+                      (spo2.map((s) => s.spo2_percentage?.average || 0)
+                        .filter((v) => v > 0)
+                        .reduce((a, b, _, arr) => a + b / arr.length, 0)
+                      ).toFixed(1)
+                    )
                   : "--"
               }
               unit="%"
@@ -118,9 +123,9 @@ export default function StressPage() {
               <MultiLineChart
                 data={stress.map((s) => ({
                   day: s.day,
-                  stress: s.stress_high || 0,
-                  recovery: s.recovery_high || 0,
-                  daytime: s.daytime_recovery || 0,
+                  stress: Math.round((s.stress_high || 0) / 60),
+                  recovery: Math.round((s.recovery_high || 0) / 60),
+                  daytime: Math.round((s.daytime_recovery || 0) / 60),
                 }))}
                 lines={[
                   { key: "stress", color: COLORS.attention, name: "Stress (min)" },
@@ -139,7 +144,7 @@ export default function StressPage() {
                 <ScoreLineChart
                   data={spo2.map((s) => ({
                     day: s.day,
-                    score: s.spo2_percentage?.average || 0,
+                    score: parseFloat((s.spo2_percentage?.average || 0).toFixed(1)),
                   }))}
                   dataKey="score"
                   title="Blood Oxygen (SpO2)"
