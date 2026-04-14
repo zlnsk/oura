@@ -454,7 +454,7 @@ ${activity.slice(-7).map((a) => `${a.day}: score=${a.score} steps=${a.steps} cal
 ${readiness.slice(-7).map((r) => `${r.day}: ${r.score}`).join(", ") || "No data"}
 
 ## Stress
-${stress.slice(-7).map((s) => `${s.day}: stress=${s.stress_high}min recovery=${s.recovery_high}min`).join(", ") || "No data"}`;
+${stress.slice(-7).map((s) => `${s.day}: stress=${Math.round((s.stress_high || 0) / 60)}min recovery=${Math.round((s.recovery_high || 0) / 60)}min`).join(", ") || "No data"}`;
 }
 
 function buildSleepPrompt(data: DataRecord): string {
@@ -521,7 +521,7 @@ function buildStressPrompt(data: DataRecord): string {
   return `You are a stress & resilience analyst for an Oura Ring dashboard. ${timeContext()} The user is viewing their Stress & Resilience page. Analyze stress levels, recovery, SpO2, and cardiovascular metrics. Be specific with numbers. ${jsonInstructions()}
 
 ## Stress Data (last 14 days)
-${stress.slice(-14).map((s) => `${s.day}: summary=${s.day_summary} stress=${s.stress_high}min recovery=${s.recovery_high}min daytime_recovery=${s.daytime_recovery || 0}min`).join("\n") || "No data"}
+${stress.slice(-14).map((s) => `${s.day}: summary=${s.day_summary} stress=${Math.round((s.stress_high || 0) / 60)}min recovery=${Math.round((s.recovery_high || 0) / 60)}min daytime_recovery=${Math.round((s.daytime_recovery || 0) / 60)}min`).join("\n") || "No data"}
 
 ## SpO2 (Blood Oxygen)
 ${spo2.slice(-14).map((s) => `${s.day}: avg=${s.spo2_percentage?.average || "?"}%`).join(", ") || "No data"}
