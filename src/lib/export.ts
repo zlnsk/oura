@@ -99,9 +99,9 @@ export function exportCSV(data: DashboardData, page: string, days: number) {
       for (const s of data.stress) {
         csv += csvRow([
           s.day,
-          s.stress_high,
-          s.recovery_high,
-          s.daytime_recovery || 0,
+          Math.round((s.stress_high || 0) / 60),
+          Math.round((s.recovery_high || 0) / 60),
+          Math.round((s.daytime_recovery || 0) / 60),
           s.day_summary || "",
         ]);
       }
