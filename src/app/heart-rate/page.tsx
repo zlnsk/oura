@@ -10,7 +10,7 @@ import { StatCard } from "@/components/ui/StatCard";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { ExportButton } from "@/components/ui/ExportButton";
 import { LoadingGrid } from "@/components/ui/LoadingGrid";
-import { LazyScoreLineChart as ScoreLineChart, LazyMultiLineChart as MultiLineChart, LazyBarChartComponent as BarChartComponent } from "@/components/charts";
+import { LazyScoreLineChart as ScoreLineChart, LazyMultiLineChart as MultiLineChart, LazyBarChartComponent as BarChartComponent, LazyIntradayChart as IntradayChart } from "@/components/charts";
 import { ChartSkeleton } from "@/components/ui/ChartSkeleton";
 import { Heart, TrendingDown, Activity, Wind, RefreshCw } from "lucide-react";
 import { trend } from "@/lib/utils";
@@ -19,6 +19,12 @@ import { AISummaryCard } from "@/components/ui/AISummaryCard";
 
 function getToday(): string {
   const d = new Date();
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+}
+
+function getPrevDate(dateStr: string): string {
+  const d = new Date(dateStr + "T12:00:00");
+  d.setDate(d.getDate() - 1);
   return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
 }
 
@@ -54,6 +60,37 @@ export default function HeartRatePage() {
   // Selected day's data
   const selectedSleepPeriod = sleepPeriods.find((s) => s.day === selectedDate && s.type === "long_sleep");
   const selectedDayHR = dailyHR.find((d) => d.day === selectedDate);
+
+  // Wake time (from selected date or previous day's long_sleep)
+  const prevDate = useMemo(() => getPrevDate(selectedDate), [selectedDate]);
+  const wakeTime = useMemo(() => {
+    if (!data?.sleepPeriods) return null;
+    const period =
+      data.sleepPeriods.find((p) => p.day === selectedDate && p.type === "long_sleep") ||
+      data.sleepPeriods.find((p) => p.day === prevDate && p.type === "long_sleep");
+    return period ? new Date(period.bedtime_end) : null;
+  }, [data?.sleepPeriods, selectedDate, prevDate]);
+
+  // Intraday HR from wake until now (only for selectedDate and capped at now)
+  const intradayHRSinceWake = useMemo(() => {
+    if (!data?.heartRate) return [];
+    const wakeTs = wakeTime?.getTime() || 0;
+    const endTs = Date.now();
+    const points: { time: string; value: number; ts: number }[] = [];
+    for (const hr of data.heartRate) {
+      if (!hr.timestamp.startsWith(selectedDate)) continue;
+      const t = new Date(hr.timestamp);
+      const ts = t.getTime();
+      if (wakeTs && ts < wakeTs) continue;
+      if (ts > endTs) continue;
+      points.push({
+        time: t.toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit", hour12: false }),
+        value: hr.bpm,
+        ts,
+      });
+    }
+    return points.sort((a, b) => a.ts - b.ts).map(({ time, value }) => ({ time, value }));
+  }, [data?.heartRate, wakeTime, selectedDate]);
 
   // HR distribution for selected day only
   const hrDistribution = useMemo(() => {
@@ -101,6 +138,29 @@ export default function HeartRatePage() {
       {data && (
         <div className="space-y-6">
           <AISummaryCard page="heart-rate" data={data} />
+
+          {/* Since wake intraday HR */}
+          {wakeTime ? (
+            intradayHRSinceWake.length > 0 ? (
+              <Suspense fallback={<ChartSkeleton />}>
+                <IntradayChart
+                  data={intradayHRSinceWake}
+                  title={`Since wake (${wakeTime.toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" })}) — Heart Rate`}
+                  color={COLORS.heartRate}
+                  unit=" bpm"
+                  gradientId="hrSinceWakeGrad"
+                />
+              </Suspense>
+            ) : (
+              <div className="premium-card p-6 text-sm text-gray-400">
+                No heart rate recorded yet today
+              </div>
+            )
+          ) : (
+            <div className="premium-card p-6 text-sm text-gray-400">
+              No sleep period found — unable to determine wake time
+            </div>
+          )}
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
             <StatCard

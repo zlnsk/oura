@@ -74,7 +74,7 @@ export async function middleware(request: NextRequest) {
     if (pathname.startsWith("/api/") || request.headers.get("accept")?.includes("application/json")) {
       return NextResponse.json({ error: "Authentication required" }, { status: 401 });
     }
-    return NextResponse.redirect(new URL(BASE_PATH + "/api/otp/auth/login", request.url));
+    return NextResponse.redirect(`${request.headers.get("x-forwarded-proto")||"https"}://${request.headers.get("x-forwarded-host")||request.headers.get("host")||request.nextUrl.host}${"/Oura/api/otp/auth/login"}`);
   }
 
   const response = NextResponse.next();
