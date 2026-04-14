@@ -33,6 +33,8 @@ export default function ReadinessPage() {
 
   const readiness = data?.readiness || [];
   const latest = readiness.find((r) => r.day === selectedDate) || readiness[readiness.length - 1];
+  const today = getToday();
+  const todayReadiness = readiness.find((r) => r.day === today);
 
   return (
     <DashboardShell>
@@ -62,6 +64,45 @@ export default function ReadinessPage() {
       {data && (
         <div className="space-y-6">
           <AISummaryCard page="readiness" data={data} />
+
+          {/* Today's readiness (since wake) */}
+          {todayReadiness ? (
+            <div className="premium-card p-6">
+              <div className="flex items-center gap-3 mb-4">
+                <div className="w-10 h-10 rounded-xl bg-amber-50 dark:bg-amber-500/10 flex items-center justify-center">
+                  <Zap className="w-5 h-5 text-amber-500" />
+                </div>
+                <div>
+                  <h3 className="font-semibold text-sm">Today since wake — Readiness</h3>
+                  <p className="text-[10px] text-gray-500 dark:text-gray-400">Score and contributors for today</p>
+                </div>
+              </div>
+              <div className="flex flex-wrap items-center justify-center gap-8 lg:gap-12">
+                <ScoreRing
+                  score={todayReadiness.score || 0}
+                  size={120}
+                  strokeWidth={10}
+                  label="Today"
+                />
+                {todayReadiness.contributors && (
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    {Object.entries(todayReadiness.contributors).map(([key, value]) => (
+                      <div key={key} className="text-center">
+                        <ScoreRing score={value as number} size={56} strokeWidth={5} className="mx-auto" />
+                        <p className="text-[10px] text-gray-500 dark:text-gray-400 mt-1 capitalize">
+                          {key.replace(/_/g, " ")}
+                        </p>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </div>
+          ) : (
+            <div className="premium-card p-6 text-sm text-gray-400">
+              No readiness score for today yet
+            </div>
+          )}
 
           {/* Score overview */}
           <div className="premium-card p-6">

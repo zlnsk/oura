@@ -4,26 +4,31 @@ import { memo } from "react";
 import {
   ResponsiveContainer,
   ComposedChart,
-  Bar,
+  Area,
   Line,
   XAxis,
   YAxis,
   CartesianGrid,
   Tooltip,
-  Legend,
+  ReferenceLine,
 } from "recharts";
 import { useTheme } from "@/components/layout/ThemeProvider";
+import { COLORS } from "@/lib/constants";
 
 interface DualIntradayChartProps {
-  data: { time: string; hr?: number; met?: number }[];
+  data: { time: string; hr?: number; hrv?: number; met?: number }[];
   title?: string;
   height?: number;
+  avgHR?: number;
+  avgHRV?: number;
 }
 
 export const DualIntradayChart = memo(function DualIntradayChart({
   data,
   title,
   height = 250,
+  avgHR,
+  avgHRV,
 }: DualIntradayChartProps) {
   const { theme } = useTheme();
   const isDark = theme === "dark";
@@ -43,13 +48,6 @@ export const DualIntradayChart = memo(function DualIntradayChart({
     );
   }
 
-  const hrValues = data.map((d) => d.hr).filter((v): v is number => v != null);
-  const avgHR = hrValues.length > 0 ? Math.round(hrValues.reduce((a, b) => a + b, 0) / hrValues.length) : null;
-  const avgMET = (() => {
-    const metValues = data.map((d) => d.met).filter((v): v is number => v != null);
-    return metValues.length > 0 ? Math.round(metValues.reduce((a, b) => a + b, 0) / metValues.length * 10) / 10 : null;
-  })();
-
   return (
     <div className="premium-card p-6">
       {title && (
@@ -58,17 +56,23 @@ export const DualIntradayChart = memo(function DualIntradayChart({
             {title}
           </h3>
           <div className="flex items-center gap-4 text-xs text-gray-500 dark:text-gray-400">
-            {avgHR !== null && (
-              <span>Avg HR: <span className="font-medium text-rose-500">{avgHR} bpm</span></span>
+            {avgHR != null && (
+              <span>Avg HR: <span className="font-medium" style={{ color: COLORS.heartRate }}>{avgHR} bpm</span></span>
             )}
-            {avgMET !== null && (
-              <span>Avg MET: <span className="font-medium text-amber-500">{avgMET}</span></span>
+            {avgHRV != null && (
+              <span>Avg HRV: <span className="font-medium" style={{ color: COLORS.hrv }}>{avgHRV} ms</span></span>
             )}
           </div>
         </div>
       )}
       <ResponsiveContainer width="100%" height={height}>
         <ComposedChart data={data} margin={{ top: 5, right: 5, bottom: 5, left: -10 }}>
+          <defs>
+            <linearGradient id="dualHRGrad" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stopColor={COLORS.heartRate} stopOpacity={0.12} />
+              <stop offset="100%" stopColor={COLORS.heartRate} stopOpacity={0} />
+            </linearGradient>
+          </defs>
           <CartesianGrid
             strokeDasharray="3 3"
             stroke={isDark ? "#ffffff" : "#000000"}
@@ -91,12 +95,12 @@ export const DualIntradayChart = memo(function DualIntradayChart({
             domain={["auto", "auto"]}
           />
           <YAxis
-            yAxisId="met"
+            yAxisId="hrv"
             orientation="right"
             tick={{ fontSize: 10, fill: isDark ? "#525868" : "#a0a7b5" }}
             axisLine={false}
             tickLine={false}
-            domain={[0, 10]}
+            domain={["auto", "auto"]}
           />
           <Tooltip
             contentStyle={{
@@ -111,35 +115,47 @@ export const DualIntradayChart = memo(function DualIntradayChart({
             }}
             formatter={(value: number, name: string) => {
               if (name === "hr") return [`${value} bpm`, "Heart Rate"];
-              if (name === "met") return [`${value}`, "MET"];
+              if (name === "hrv") return [`${value} ms`, "HRV"];
               return [value, name];
             }}
           />
-          <Legend
-            verticalAlign="top"
-            height={28}
-            formatter={(value: string) => {
-              if (value === "hr") return "Heart Rate";
-              if (value === "met") return "MET";
-              return value;
-            }}
-            wrapperStyle={{ fontSize: 11 }}
-          />
-          <Bar
-            yAxisId="met"
-            dataKey="met"
-            fill="#f59e0b"
-            fillOpacity={0.35}
-            radius={[8, 8, 0, 0]}
-          />
-          <Line
+          {avgHR != null && (
+            <ReferenceLine
+              yAxisId="hr"
+              y={avgHR}
+              stroke={COLORS.heartRate}
+              strokeDasharray="4 4"
+              strokeOpacity={0.4}
+            />
+          )}
+          {avgHRV != null && (
+            <ReferenceLine
+              yAxisId="hrv"
+              y={avgHRV}
+              stroke={COLORS.hrv}
+              strokeDasharray="4 4"
+              strokeOpacity={0.4}
+            />
+          )}
+          <Area
             yAxisId="hr"
             type="monotone"
             dataKey="hr"
-            stroke="#f43f5e"
+            stroke={COLORS.heartRate}
+            strokeWidth={2}
+            fill="url(#dualHRGrad)"
+            dot={false}
+            activeDot={{ r: 4, fill: COLORS.heartRate, stroke: "none" }}
+            connectNulls
+          />
+          <Line
+            yAxisId="hrv"
+            type="monotone"
+            dataKey="hrv"
+            stroke={COLORS.hrv}
             strokeWidth={2}
             dot={false}
-            activeDot={{ r: 4, fill: "#f43f5e", stroke: "none" }}
+            activeDot={{ r: 4, fill: COLORS.hrv, stroke: "none" }}
             connectNulls
           />
         </ComposedChart>

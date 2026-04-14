@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, Suspense } from "react";
+import { useEffect, useMemo, useState, Suspense } from "react";
 import { DashboardShell } from "@/components/layout/DashboardShell";
 import { useOuraData } from "@/components/layout/OuraDataProvider";
 import { PageHeader } from "@/components/ui/PageHeader";
@@ -10,7 +10,7 @@ import { StatCard } from "@/components/ui/StatCard";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { ExportButton } from "@/components/ui/ExportButton";
 import { LoadingGrid } from "@/components/ui/LoadingGrid";
-import { LazyScoreLineChart as ScoreLineChart, LazyMultiLineChart as MultiLineChart } from "@/components/charts";
+import { LazyScoreLineChart as ScoreLineChart, LazyMultiLineChart as MultiLineChart, LazyIntradayChart as IntradayChart } from "@/components/charts";
 import { ChartSkeleton } from "@/components/ui/ChartSkeleton";
 import { Brain, Shield, Gauge, Wind, RefreshCw } from "lucide-react";
 import { average } from "@/lib/utils";
@@ -19,6 +19,12 @@ import { AISummaryCard } from "@/components/ui/AISummaryCard";
 
 function getToday(): string {
   const d = new Date();
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+}
+
+function getPrevDate(dateStr: string): string {
+  const d = new Date(dateStr + "T12:00:00");
+  d.setDate(d.getDate() - 1);
   return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
 }
 
@@ -37,6 +43,49 @@ export default function StressPage() {
   const vo2Max = data?.vo2Max || [];
 
   const latest = stress.find((s) => s.day === selectedDate) || stress[stress.length - 1];
+
+  // Wake time (selected date or previous day's long_sleep)
+  const prevDate = useMemo(() => getPrevDate(selectedDate), [selectedDate]);
+  const wakeTime = useMemo(() => {
+    if (!data?.sleepPeriods) return null;
+    const period =
+      data.sleepPeriods.find((p) => p.day === selectedDate && p.type === "long_sleep") ||
+      data.sleepPeriods.find((p) => p.day === prevDate && p.type === "long_sleep");
+    return period ? new Date(period.bedtime_end) : null;
+  }, [data?.sleepPeriods, selectedDate, prevDate]);
+
+  // Intraday stress level from wake until now
+  const intradayStressSinceWake = useMemo(() => {
+    if (!data?.stress) return [];
+    const wakeTs = wakeTime?.getTime() || 0;
+    const endTs = Date.now();
+    const points: { time: string; value: number; ts: number }[] = [];
+    for (const s of data.stress) {
+      const interval = (s as unknown as { interval?: number }).interval;
+      const items = (s as unknown as { items?: number[] }).items;
+      const timestamp = (s as unknown as { timestamp?: string }).timestamp;
+      if (!interval || !items || !timestamp) continue;
+      const start = new Date(timestamp);
+      for (let i = 0; i < items.length; i++) {
+        const v = items[i];
+        if (v == null) continue;
+        const t = new Date(start.getTime() + i * interval * 1000);
+        const ts = t.getTime();
+        if (!t.toISOString().startsWith(selectedDate)) {
+          const local = `${t.getFullYear()}-${String(t.getMonth() + 1).padStart(2, "0")}-${String(t.getDate()).padStart(2, "0")}`;
+          if (local !== selectedDate) continue;
+        }
+        if (wakeTs && ts < wakeTs) continue;
+        if (ts > endTs) continue;
+        points.push({
+          time: t.toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit", hour12: false }),
+          value: Math.round(v * 10) / 10,
+          ts,
+        });
+      }
+    }
+    return points.sort((a, b) => a.ts - b.ts).map(({ time, value }) => ({ time, value }));
+  }, [data?.stress, wakeTime, selectedDate]);
 
   return (
     <DashboardShell>
@@ -66,6 +115,28 @@ export default function StressPage() {
       {data && (
         <div className="space-y-6">
           <AISummaryCard page="stress" data={data} />
+
+          {/* Since wake intraday stress */}
+          {wakeTime ? (
+            intradayStressSinceWake.length > 0 ? (
+              <Suspense fallback={<ChartSkeleton />}>
+                <IntradayChart
+                  data={intradayStressSinceWake}
+                  title={`Since wake (${wakeTime.toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" })}) — Stress Level`}
+                  color={COLORS.attention}
+                  gradientId="stressSinceWakeGrad"
+                />
+              </Suspense>
+            ) : (
+              <div className="premium-card p-6 text-sm text-gray-400">
+                No stress level recorded yet today
+              </div>
+            )
+          ) : (
+            <div className="premium-card p-6 text-sm text-gray-400">
+              No sleep period found — unable to determine wake time
+            </div>
+          )}
 
           {/* Stats */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">

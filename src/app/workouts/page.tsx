@@ -73,6 +73,37 @@ export default function WorkoutsPage() {
     [data?.heartRate, selectedDate]
   );
 
+  // Wake time (selected date or previous day's long_sleep)
+  const prevDate = useMemo(() => {
+    const d = new Date(selectedDate + "T12:00:00");
+    d.setDate(d.getDate() - 1);
+    return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+  }, [selectedDate]);
+  const wakeTime = useMemo(() => {
+    if (!data?.sleepPeriods) return null;
+    const period =
+      data.sleepPeriods.find((p) => p.day === selectedDate && p.type === "long_sleep") ||
+      data.sleepPeriods.find((p) => p.day === prevDate && p.type === "long_sleep");
+    return period ? new Date(period.bedtime_end) : null;
+  }, [data?.sleepPeriods, selectedDate, prevDate]);
+
+  // Workouts started after wake time today
+  const workoutsSinceWake = useMemo(() => {
+    if (!allWorkouts.length) return [];
+    const wakeTs = wakeTime?.getTime() || 0;
+    const endTs = Date.now();
+    return allWorkouts
+      .filter((w) => {
+        if (w.day !== selectedDate) return false;
+        if (!w.start_datetime) return false;
+        const ts = new Date(w.start_datetime).getTime();
+        if (wakeTs && ts < wakeTs) return false;
+        if (ts > endTs) return false;
+        return true;
+      })
+      .sort((a, b) => new Date(a.start_datetime).getTime() - new Date(b.start_datetime).getTime());
+  }, [allWorkouts, wakeTime, selectedDate]);
+
   // Day stats
   const dayCalories = dayWorkouts.reduce((sum, w) => sum + (w.calories || 0), 0);
   const dayDistance = dayWorkouts.reduce((sum, w) => sum + (w.distance || 0), 0);
@@ -166,6 +197,62 @@ export default function WorkoutsPage() {
       {data && (
         <div className="space-y-6">
           <AISummaryCard page="workouts" data={data} />
+
+          {/* Workouts since wake */}
+          {wakeTime ? (
+            workoutsSinceWake.length > 0 ? (
+              <div className="premium-card p-6">
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="w-10 h-10 rounded-xl bg-rose-50 dark:bg-rose-950/30 flex items-center justify-center">
+                    <Dumbbell className="w-5 h-5 text-rose-500" />
+                  </div>
+                  <div>
+                    <h3 className="font-semibold text-sm">
+                      Today since wake ({wakeTime.toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" })}) — Workouts
+                    </h3>
+                    <p className="text-[10px] text-gray-500 dark:text-gray-400">
+                      {workoutsSinceWake.length} workout{workoutsSinceWake.length > 1 ? "s" : ""} since wake
+                    </p>
+                  </div>
+                </div>
+                <div className="divide-y divide-slate-200/60 dark:divide-slate-800/40">
+                  {workoutsSinceWake.map((w) => (
+                    <div key={w.id} className="py-3 flex items-center justify-between gap-4">
+                      <div>
+                        <p className="font-medium text-sm capitalize">
+                          {w.activity?.replace(/_/g, " ") || "Workout"}
+                        </p>
+                        <p className="text-xs text-gray-400">
+                          {new Date(w.start_datetime).toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" })}
+                          {" \u2014 "}
+                          {formatDuration(workoutDuration(w))}
+                        </p>
+                      </div>
+                      <span
+                        className={`badge ${
+                          w.intensity === "high"
+                            ? "badge-danger"
+                            : w.intensity === "medium"
+                            ? "badge-warning"
+                            : "badge-success"
+                        }`}
+                      >
+                        {w.intensity}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            ) : (
+              <div className="premium-card p-6 text-sm text-gray-400">
+                No workouts recorded yet today
+              </div>
+            )
+          ) : (
+            <div className="premium-card p-6 text-sm text-gray-400">
+              No sleep period found — unable to determine wake time
+            </div>
+          )}
 
           {/* Day stats */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">

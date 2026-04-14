@@ -11,7 +11,7 @@ import { ScoreRing } from "@/components/ui/ScoreRing";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { ExportButton } from "@/components/ui/ExportButton";
 import { LoadingGrid } from "@/components/ui/LoadingGrid";
-import { LazyScoreLineChart as ScoreLineChart, LazySleepStagesChart as SleepStagesChart, LazyMultiLineChart as MultiLineChart, LazyIntradayChart as IntradayChart } from "@/components/charts";
+import { LazyScoreLineChart as ScoreLineChart, LazySleepStagesChart as SleepStagesChart, LazyMultiLineChart as MultiLineChart, LazyIntradayChart as IntradayChart, LazyDualIntradayChart as DualIntradayChart } from "@/components/charts";
 import { ChartSkeleton } from "@/components/ui/ChartSkeleton";
 import {
   BedDouble,
@@ -88,6 +88,13 @@ export default function SleepPage() {
   // Intraday HR/HRV for selected night
   const sleepHR = useMemo(() => selectedPeriod ? buildIntradayHR(selectedPeriod) : [], [selectedPeriod]);
   const sleepHRV = useMemo(() => selectedPeriod ? buildIntradayHRV(selectedPeriod) : [], [selectedPeriod]);
+  const sleepHRandHRV = useMemo(() => {
+    const hrMap = new Map(sleepHR.map(d => [d.time, d.value]));
+    const hrvMap = new Map(sleepHRV.map(d => [d.time, d.value]));
+    const allTimes = [...new Set([...sleepHR.map(d => d.time), ...sleepHRV.map(d => d.time)])];
+    allTimes.sort();
+    return allTimes.map(time => ({ time, hr: hrMap.get(time), hrv: hrvMap.get(time) }));
+  }, [sleepHR, sleepHRV]);
 
   const avgTotal = average(periods.map((p) => p.total_sleep_duration));
   const avgDeep = average(periods.map((p) => p.deep_sleep_duration));
@@ -239,27 +246,14 @@ export default function SleepPage() {
           })()}
 
           {/* Intraday HR & HRV during sleep */}
-          {(sleepHR.length > 0 || sleepHRV.length > 0) && (
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-              <IntradayChart
-                data={sleepHR}
-                title="Heart Rate During Sleep"
-                color={COLORS.heartRate}
-                unit=" bpm"
-                avgValue={selectedPeriod ? Math.round(selectedPeriod.average_heart_rate) : undefined}
-                gradientId="sleepHRGrad"
-              />
-              <IntradayChart
-                data={sleepHRV}
-                title="HRV During Sleep"
-                color={COLORS.hrv}
-                unit=" ms"
-                avgValue={selectedPeriod ? Math.round(selectedPeriod.average_hrv) : undefined}
-                gradientId="sleepHRVGrad"
-              />
-            </div>
+          {sleepHRandHRV.length > 0 && (
+            <DualIntradayChart
+              data={sleepHRandHRV}
+              title="Heart Rate & HRV During Sleep"
+              avgHR={selectedPeriod ? Math.round(selectedPeriod.average_heart_rate) : undefined}
+              avgHRV={selectedPeriod ? Math.round(selectedPeriod.average_hrv) : undefined}
+            />
           )}
-
           {/* Period averages */}
           <div className="flex items-center justify-between">
             <h2 className="text-sm font-medium text-gray-500 dark:text-gray-400">Trends</h2>

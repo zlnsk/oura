@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, Suspense } from "react";
+import { useEffect, useMemo, useState, Suspense } from "react";
 import { DashboardShell } from "@/components/layout/DashboardShell";
 import { useOuraData } from "@/components/layout/OuraDataProvider";
 import { PageHeader } from "@/components/ui/PageHeader";
@@ -23,6 +23,12 @@ import type { WithingsWeightEntry } from "@/types/oura";
 
 function getToday(): string {
   const d = new Date();
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+}
+
+function getPrevDate(dateStr: string): string {
+  const d = new Date(dateStr + "T12:00:00");
+  d.setDate(d.getDate() - 1);
   return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
 }
 
@@ -100,6 +106,30 @@ export default function WeightPage() {
 
   const noWithingsData = weight.length === 0 && !loading;
 
+  // Wake time (selected date or previous day's long_sleep)
+  const prevDate = useMemo(() => getPrevDate(selectedDate), [selectedDate]);
+  const wakeTime = useMemo(() => {
+    if (!data?.sleepPeriods) return null;
+    const period =
+      data.sleepPeriods.find((p) => p.day === selectedDate && p.type === "long_sleep") ||
+      data.sleepPeriods.find((p) => p.day === prevDate && p.type === "long_sleep");
+    return period ? new Date(period.bedtime_end) : null;
+  }, [data?.sleepPeriods, selectedDate, prevDate]);
+
+  // Weight measurements taken today after wake time
+  const measurementsSinceWake = useMemo(() => {
+    if (!weightWithBmi.length) return [];
+    const wakeTs = wakeTime?.getTime() || 0;
+    const endTs = Date.now();
+    return weightWithBmi.filter((w) => {
+      if (w.day !== selectedDate) return false;
+      const ts = new Date(w.timestamp).getTime();
+      if (wakeTs && ts < wakeTs) return false;
+      if (ts > endTs) return false;
+      return true;
+    });
+  }, [weightWithBmi, wakeTime, selectedDate]);
+
   return (
     <DashboardShell>
       <PageHeader
@@ -134,6 +164,60 @@ export default function WeightPage() {
       {data && weight.length > 0 && (
         <div className="space-y-6">
           <AISummaryCard page="weight" data={data} />
+
+          {/* Today's measurements since wake */}
+          {wakeTime ? (
+            measurementsSinceWake.length > 0 ? (
+              <div className="premium-card p-6">
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="w-10 h-10 rounded-xl bg-teal-50 dark:bg-teal-500/10 flex items-center justify-center">
+                    <Scale className="w-5 h-5 text-teal-500" />
+                  </div>
+                  <div>
+                    <h3 className="font-semibold text-sm">
+                      Today since wake ({wakeTime.toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" })}) — Measurements
+                    </h3>
+                    <p className="text-[10px] text-gray-500 dark:text-gray-400">
+                      {measurementsSinceWake.length} measurement{measurementsSinceWake.length > 1 ? "s" : ""} since wake
+                    </p>
+                  </div>
+                </div>
+                <div className="space-y-3">
+                  {measurementsSinceWake.map((m) => (
+                    <div key={m.timestamp} className="flex flex-wrap items-center gap-6 p-3 rounded-xl inset-cell">
+                      <div className="text-xs text-gray-500">
+                        {new Date(m.timestamp).toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" })}
+                      </div>
+                      <div>
+                        <span className="text-lg font-bold text-teal-600 dark:text-teal-400">{formatWeight(m.weight)}</span>
+                        <span className="text-xs text-gray-500 ml-1">kg</span>
+                      </div>
+                      {m.fat_ratio != null && (
+                        <div>
+                          <span className="text-lg font-bold text-orange-500">{m.fat_ratio.toFixed(1)}%</span>
+                          <span className="text-xs text-gray-500 ml-1">fat</span>
+                        </div>
+                      )}
+                      {m.muscle_mass != null && (
+                        <div>
+                          <span className="text-lg font-bold text-indigo-500">{formatWeight(m.muscle_mass)}</span>
+                          <span className="text-xs text-gray-500 ml-1">kg muscle</span>
+                        </div>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            ) : (
+              <div className="premium-card p-6 text-sm text-gray-400">
+                No weight measurements recorded yet today
+              </div>
+            )
+          ) : (
+            <div className="premium-card p-6 text-sm text-gray-400">
+              No sleep period found — unable to determine wake time
+            </div>
+          )}
 
           {/* Today's / Selected measurement */}
           {latest && (
