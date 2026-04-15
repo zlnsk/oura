@@ -205,25 +205,29 @@ export async function POST(req: NextRequest) {
 
     try {
       const parsed = JSON.parse(text);
-      return NextResponse.json(
-        { summary: parsed, remaining },
-        { headers: rateLimitHeaders }
-      );
+      // Validate shape before trusting the payload.
+      if (parsed && typeof parsed === "object" && typeof parsed.overall === "string") {
+        return NextResponse.json(
+          { summary: parsed, remaining },
+          { headers: rateLimitHeaders }
+        );
+      }
     } catch {
-      return NextResponse.json(
-        {
-          summary: {
-            overall: text,
-            sleep: "",
-            activity: "",
-            readiness: "",
-            tip: "",
-          },
-          remaining,
-        },
-        { headers: rateLimitHeaders }
-      );
+      // fall through to the safe fallback below
     }
+    return NextResponse.json(
+      {
+        summary: {
+          overall: "Unable to parse AI response. Please try again.",
+          sleep: "",
+          activity: "",
+          readiness: "",
+          tip: "",
+        },
+        remaining,
+      },
+      { headers: rateLimitHeaders }
+    );
   } catch (error) {
     console.error("AI summary error:", error instanceof Error ? error.message : "Unknown");
     return NextResponse.json(
