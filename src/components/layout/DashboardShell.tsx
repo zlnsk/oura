@@ -66,14 +66,9 @@ const ConnectionStatus = memo(function ConnectionStatus() {
 function BrandHeader() {
   const pathname = usePathname();
   return (
-    <header className="pt-10 pb-4 px-4 text-center">
+    <header className="hero">
       <Link href="/dashboard" className="inline-block">
-        <h1
-          className="m3-brand-title text-3xl sm:text-4xl"
-          style={{ color: "var(--m3-on-surface)" }}
-        >
-          OURA
-        </h1>
+        <h1 className="m3-brand-title">Oura</h1>
       </Link>
       <nav
         className="mt-6 mx-auto max-w-[960px] overflow-x-auto scrollbar-thin"
