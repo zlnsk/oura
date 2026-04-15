@@ -173,7 +173,6 @@ export default function WorkoutsPage() {
     <DashboardShell>
       <PageHeader
         title="Workouts & Sessions"
-        subtitle="Exercise tracking and tags"
         icon={Dumbbell}
         iconColor={COLORS.heartRate}
         action={

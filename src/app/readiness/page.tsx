@@ -40,7 +40,6 @@ export default function ReadinessPage() {
     <DashboardShell>
       <PageHeader
         title="Readiness"
-        subtitle="Recovery and readiness metrics"
         icon={Zap}
         iconColor={COLORS.readiness}
         action={

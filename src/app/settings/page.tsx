@@ -123,7 +123,6 @@ export default function SettingsPage() {
     <DashboardShell>
       <PageHeader
         title="Settings"
-        subtitle="Configure your dashboard and API connections"
         icon={Settings}
         iconColor="#64748b"
       />

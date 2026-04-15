@@ -114,7 +114,6 @@ export default function HeartRatePage() {
     <DashboardShell>
       <PageHeader
         title="Heart Rate"
-        subtitle="Heart rate and HRV analysis"
         icon={Heart}
         iconColor={COLORS.heartRate}
         action={

@@ -105,7 +105,6 @@ export default function SleepPage() {
     <DashboardShell>
       <PageHeader
         title="Sleep Analysis"
-        subtitle="Detailed sleep metrics and patterns"
         icon={BedDouble}
         iconColor={COLORS.sleep}
         action={
