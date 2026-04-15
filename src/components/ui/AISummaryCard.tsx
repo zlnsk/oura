@@ -55,7 +55,7 @@ function trimDataForPage(data: DashboardData, page: PageType): Partial<Dashboard
 
 const AI_CONSENT_KEY = "oura-ai-consent";
 
-export function AISummaryCard({ page, data }: { page: PageType; data: DashboardData }) {
+export function AISummaryCard({ page, data, compact }: { page: PageType; data: DashboardData; compact?: boolean }) {
   const [summary, setSummary] = useState<AISummary | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -110,6 +110,21 @@ export function AISummaryCard({ page, data }: { page: PageType; data: DashboardD
       setLoading(false);
     }
   };
+
+  // Minimalist inline mode: show just a small Generate button when empty
+  if (compact && !summary && !loading && !error && !showConsent) {
+    return (
+      <div className="flex justify-center my-3">
+        <button
+          onClick={fetchSummary}
+          className="inline-flex items-center gap-1.5 text-xs font-medium px-3.5 py-1.5 rounded-full bg-violet-50 dark:bg-violet-500/10 text-violet-600 dark:text-violet-400 border border-violet-200/50 dark:border-violet-500/20 hover:bg-violet-100 dark:hover:bg-violet-500/15 transition-all"
+          aria-label="Generate AI insight"
+        >
+          <Sparkles className="w-3.5 h-3.5" /> Generate AI insight
+        </button>
+      </div>
+    );
+  }
 
   return (
     <div className="ai-card">
