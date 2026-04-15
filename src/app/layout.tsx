@@ -33,7 +33,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang="en" data-app="oura" suppressHydrationWarning>
       <body className="antialiased" style={{ fontFamily: '"Google Sans", "Roboto", system-ui, -apple-system, sans-serif' }}>
         <a
           href="#main-content"
