@@ -115,7 +115,6 @@ export default function ActivityPage() {
     <DashboardShell>
       <PageHeader
         title="Activity"
-        subtitle="Movement, steps, and calorie tracking"
         icon={Activity}
         iconColor={COLORS.activity}
         action={

@@ -1,3 +1,8 @@
+@import "./m3-tokens.css";
+@import "./m3-components.css";
+
+:root { --m3-source-hue: 150; }
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -498,3 +503,74 @@ select:focus-visible {
 .dark .toast-item {
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.35), 0 2px 6px rgba(0, 0, 0, 0.2);
 }
+
+/* ==================== M3 Visible Integration ==================== */
+/* Rebinds legacy vars, applies M3 surface gradient + buttons + font */
+
+body {
+  font-family: var(--m3-font-brand, "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif) !important;
+  background:
+    radial-gradient(1200px circle at 8% -10%, hsl(var(--m3-source-hue) 65% 78% / 0.28), transparent 55%),
+    radial-gradient(900px circle at 105% 8%, hsl(calc(var(--m3-source-hue) + 60) 60% 78% / 0.22), transparent 50%),
+    var(--m3-surface) !important;
+  color: var(--m3-on-surface);
+  min-height: 100dvh;
+}
+
+@media (prefers-color-scheme: dark) {
+  body {
+    background:
+      radial-gradient(1200px circle at 8% -10%, hsl(var(--m3-source-hue) 55% 30% / 0.40), transparent 55%),
+      radial-gradient(900px circle at 105% 8%, hsl(calc(var(--m3-source-hue) + 60) 40% 22% / 0.30), transparent 50%),
+      var(--m3-surface) !important;
+  }
+}
+
+/* M3 Filled button — override legacy .btn-primary */
+.btn-primary {
+  background: var(--m3-primary) !important;
+  background-image: none !important;
+  color: var(--m3-on-primary) !important;
+  border-radius: var(--m3-shape-full) !important;
+  box-shadow: var(--m3-elev-1) !important;
+  border: 0 !important;
+  position: relative;
+  overflow: hidden;
+  transition: box-shadow var(--m3-dur-short-3, 150ms) var(--m3-ease-standard, cubic-bezier(0.2,0,0,1)),
+              transform var(--m3-dur-short-2, 100ms) var(--m3-ease-standard, cubic-bezier(0.2,0,0,1));
+}
+.btn-primary:hover:not(:disabled) {
+  background: var(--m3-primary) !important;
+  background-image: none !important;
+  box-shadow: var(--m3-elev-2) !important;
+  filter: brightness(1.08);
+}
+.btn-primary:active:not(:disabled) { transform: scale(0.97); }
+
+/* M3 Outlined button — override legacy .btn-secondary / .btn-ghost */
+.btn-secondary, .btn-ghost {
+  background: transparent !important;
+  color: var(--m3-on-surface) !important;
+  border: 1px solid var(--m3-outline-variant) !important;
+  border-radius: var(--m3-shape-full) !important;
+  box-shadow: none !important;
+}
+.btn-secondary:hover, .btn-ghost:hover {
+  background: color-mix(in srgb, var(--m3-on-surface) 6%, transparent) !important;
+  border-color: var(--m3-outline) !important;
+}
+
+/* Cards — M3 surface-container-low + large radius + elevation-1 */
+.glass-card, .premium-card, .elevated-card, .card, .m3-card {
+  background: var(--m3-surface-container-low) !important;
+  border-radius: var(--m3-shape-lg) !important;
+  box-shadow: var(--m3-elev-1) !important;
+  border-color: var(--m3-outline-variant) !important;
+}
+.glass-card:hover, .premium-card:hover {
+  box-shadow: var(--m3-elev-2) !important;
+}
+/* ================== End M3 Visible Integration =================== */
+
+/* M3 overlay loaded LAST so !important rules win over app body/btn CSS */
+@import "./m3-overlay.css";

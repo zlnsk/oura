@@ -53,3 +53,6 @@ out/
 *.pre-otp
 
 .withings-tokens.json
+
+# all backups
+*.bak*

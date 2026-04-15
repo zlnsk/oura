@@ -134,7 +134,6 @@ export default function WeightPage() {
     <DashboardShell>
       <PageHeader
         title="Weight"
-        subtitle="Body weight and composition from Withings"
         icon={Scale}
         iconColor={COLORS.weight}
         action={

@@ -91,7 +91,6 @@ export default function StressPage() {
     <DashboardShell>
       <PageHeader
         title="Stress & Resilience"
-        subtitle="Stress levels, SpO2, and cardiovascular metrics"
         icon={Brain}
         iconColor={COLORS.hrv}
         action={
