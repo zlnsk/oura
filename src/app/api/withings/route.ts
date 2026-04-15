@@ -23,7 +23,13 @@ export async function GET(req: NextRequest) {
       const path = await import("path");
       const tokenFile = path.join(process.cwd(), ".withings-tokens.json");
       const raw = await fs.readFile(tokenFile, "utf-8");
-      const stored = JSON.parse(raw);
+      let stored: { access_token?: string; refresh_token?: string };
+      try {
+        stored = JSON.parse(raw);
+      } catch {
+        // Token file corrupted — treat as missing rather than crash the request.
+        stored = {};
+      }
       withingsToken = stored.access_token;
       refreshToken = refreshToken || stored.refresh_token;
     } catch {
@@ -77,13 +83,23 @@ export async function GET(req: NextRequest) {
         maxAge: COOKIE_MAX_AGE,
         path: "/",
       });
-      // Persist refreshed tokens server-side
-      try {
-        require("fs").writeFileSync(
-          require("path").join(process.cwd(), ".withings-tokens.json"),
-          JSON.stringify({ access_token: newTokens.access_token, refresh_token: newTokens.refresh_token, expires_at: Date.now() + 10800 * 1000 })
-        );
-      } catch {}
+      // Persist refreshed tokens server-side (async, non-blocking).
+      void (async () => {
+        try {
+          const fs = await import("fs/promises");
+          const path = await import("path");
+          await fs.writeFile(
+            path.join(process.cwd(), ".withings-tokens.json"),
+            JSON.stringify({
+              access_token: newTokens.access_token,
+              refresh_token: newTokens.refresh_token,
+              expires_at: Date.now() + 10800 * 1000,
+            })
+          );
+        } catch (e) {
+          console.warn("Failed to persist Withings tokens:", e instanceof Error ? e.message : e);
+        }
+      })();
     }
 
     return res;
