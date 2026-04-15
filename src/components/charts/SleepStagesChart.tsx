@@ -13,6 +13,8 @@ import {
 } from "recharts";
 import { formatDate } from "@/lib/utils";
 import { useTheme } from "@/components/layout/ThemeProvider";
+import { m3ChartGrid, m3AxisTick, m3TooltipContentStyle } from "./chartTheme";
+import { COLORS } from "@/lib/constants";
 import type { SleepPeriod } from "@/types/oura";
 
 interface SleepStagesChartProps {
@@ -44,43 +46,30 @@ export const SleepStagesChart = memo(function SleepStagesChart({
       </h3>
       <ResponsiveContainer width="100%" height={height}>
         <BarChart data={chartData} margin={{ top: 5, right: 5, bottom: 5, left: -10 }}>
-          <CartesianGrid
-            strokeDasharray="3 3"
-            stroke={isDark ? "#ffffff" : "#000000"}
-            strokeOpacity={isDark ? 0.08 : 0.04}
-            vertical={false}
-          />
+          <CartesianGrid {...m3ChartGrid} strokeOpacity={isDark ? 0.5 : 0.6} />
           <XAxis
             dataKey="day"
             tickFormatter={formatDate}
-            tick={{ fontSize: 10, fill: isDark ? "#525868" : "#a0a7b5" }}
+            tick={m3AxisTick}
             axisLine={false}
             tickLine={false}
           />
           <YAxis
-            tick={{ fontSize: 10, fill: isDark ? "#525868" : "#a0a7b5" }}
+            tick={m3AxisTick}
             axisLine={false}
             tickLine={false}
-            label={{ value: "Minutes", angle: -90, position: "insideLeft", style: { fontSize: 10, fill: isDark ? "#525868" : "#a0a7b5" } }}
+            label={{ value: "Minutes", angle: -90, position: "insideLeft", style: m3AxisTick }}
           />
           <Tooltip
-            contentStyle={{
-              backgroundColor: isDark ? "#1a1a24" : "#ffffff",
-              border: `1px solid ${isDark ? "rgba(255,255,255,0.08)" : "#e5e7eb"}`,
-              borderRadius: "12px",
-              boxShadow: isDark
-                ? "0 8px 32px rgba(0, 0, 0, 0.4), 0 2px 8px rgba(0, 0, 0, 0.3)"
-                : "0 8px 24px rgba(0, 0, 0, 0.08), 0 2px 8px rgba(0, 0, 0, 0.04)",
-              padding: "12px 16px",
-            }}
+            contentStyle={m3TooltipContentStyle}
             labelFormatter={(label) => formatDate(label as string)}
             formatter={(value: number, name: string) => [`${value} min`, name]}
           />
           <Legend wrapperStyle={{ fontSize: 12 }} />
-          <Bar dataKey="deep" name="Deep" stackId="a" fill="#6366f1" radius={[0, 0, 0, 0]} />
-          <Bar dataKey="rem" name="REM" stackId="a" fill="#8b5cf6" />
-          <Bar dataKey="light" name="Light" stackId="a" fill="#a78bfa" />
-          <Bar dataKey="awake" name="Awake" stackId="a" fill="#f43f5e" radius={[8, 8, 0, 0]} />
+          <Bar dataKey="deep" name="Deep" stackId="a" fill={COLORS.deep} radius={[0, 0, 0, 0]} />
+          <Bar dataKey="rem" name="REM" stackId="a" fill={COLORS.rem} />
+          <Bar dataKey="light" name="Light" stackId="a" fill={COLORS.light} />
+          <Bar dataKey="awake" name="Awake" stackId="a" fill={COLORS.awake} radius={[8, 8, 0, 0]} />
         </BarChart>
       </ResponsiveContainer>
     </div>

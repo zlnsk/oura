@@ -76,9 +76,8 @@ export function ScoreRing({
             cy={size / 2}
             r={radius}
             fill="none"
-            stroke="currentColor"
+            stroke="var(--m3-surface-container-high)"
             strokeWidth={strokeWidth}
-            className="text-gray-100 dark:text-white/5"
           />
           {/* Animated progress arc */}
           <circle

@@ -12,6 +12,7 @@ import {
   ReferenceLine,
 } from "recharts";
 import { useTheme } from "@/components/layout/ThemeProvider";
+import { m3ChartGrid, m3AxisTick, m3TooltipContentStyle } from "./chartTheme";
 
 interface IntradayChartProps {
   data: { time: string; value: number }[];
@@ -74,37 +75,23 @@ export const IntradayChart = memo(function IntradayChart({
               <stop offset="100%" stopColor={color} stopOpacity={0} />
             </linearGradient>
           </defs>
-          <CartesianGrid
-            strokeDasharray="3 3"
-            stroke={isDark ? "#ffffff" : "#000000"}
-            strokeOpacity={isDark ? 0.08 : 0.04}
-            vertical={false}
-          />
+          <CartesianGrid {...m3ChartGrid} strokeOpacity={isDark ? 0.5 : 0.6} />
           <XAxis
             dataKey="time"
-            tick={{ fontSize: 10, fill: isDark ? "#525868" : "#a0a7b5" }}
+            tick={m3AxisTick}
             axisLine={false}
             tickLine={false}
             interval="preserveStartEnd"
             minTickGap={40}
           />
           <YAxis
-            tick={{ fontSize: 10, fill: isDark ? "#525868" : "#a0a7b5" }}
+            tick={m3AxisTick}
             axisLine={false}
             tickLine={false}
             domain={domain || ["auto", "auto"]}
           />
           <Tooltip
-            contentStyle={{
-              backgroundColor: isDark ? "#1a1a24" : "#ffffff",
-              border: `1px solid ${isDark ? "rgba(255,255,255,0.08)" : "#e5e7eb"}`,
-              borderRadius: "12px",
-              boxShadow: isDark
-                ? "0 8px 32px rgba(0, 0, 0, 0.4), 0 2px 8px rgba(0, 0, 0, 0.3)"
-                : "0 8px 24px rgba(0, 0, 0, 0.08), 0 2px 8px rgba(0, 0, 0, 0.04)",
-              padding: "10px 14px",
-              fontSize: 12,
-            }}
+            contentStyle={{ ...m3TooltipContentStyle, padding: "10px 14px", fontSize: 12 }}
             formatter={(value: number) => [`${value}${unit}`, ""]}
             labelFormatter={(label) => `${label}`}
           />

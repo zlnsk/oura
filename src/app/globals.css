@@ -1,8 +1,9 @@
 @import "shared-m3/tokens.css";
 @import "shared-m3/components.css";
-@import "shared-m3/overlay.css";
 @import "./m3-tokens.css";
 @import "./m3-components.css";
+/* Overlay loaded LAST so !important rules win over app body/btn CSS */
+@import "./m3-overlay.css";
 
 :root { --m3-source-hue: 150; }
 
@@ -574,9 +575,6 @@ body {
   box-shadow: var(--m3-elev-2) !important;
 }
 /* ================== End M3 Visible Integration =================== */
-
-/* M3 overlay loaded LAST so !important rules win over app body/btn CSS */
-@import "./m3-overlay.css";
 
 /* Ported from InterviewAssist: title + menu layout (topbar-left + drawer-tabs) */
 .topbar-left {
