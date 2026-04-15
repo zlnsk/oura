@@ -1,11 +1,24 @@
 "use client";
 
 import { memo } from "react";
-import { Sidebar } from "@/components/layout/Sidebar";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { ErrorBoundary } from "@/components/ui/ErrorBoundary";
 import { StatusChip } from "@/components/ui/StatusChip";
-import { MobileBottomNav } from "@/components/ui/MobileBottomNav";
 import { useOuraData } from "@/components/layout/OuraDataProvider";
+import { cn } from "@/lib/utils";
+
+const tabs = [
+  { href: "/dashboard", label: "Dashboard" },
+  { href: "/sleep", label: "Sleep" },
+  { href: "/activity", label: "Activity" },
+  { href: "/readiness", label: "Readiness" },
+  { href: "/heart-rate", label: "Heart Rate" },
+  { href: "/stress", label: "Stress" },
+  { href: "/workouts", label: "Workouts" },
+  { href: "/weight", label: "Weight" },
+  { href: "/settings", label: "Settings" },
+];
 
 const LoadingBar = memo(function LoadingBar() {
   const { loading } = useOuraData();
@@ -50,18 +63,60 @@ const ConnectionStatus = memo(function ConnectionStatus() {
   );
 });
 
+function BrandHeader() {
+  const pathname = usePathname();
+  return (
+    <header className="pt-10 pb-4 px-4 text-center">
+      <Link href="/dashboard" className="inline-block">
+        <h1
+          className="m3-brand-title text-3xl sm:text-4xl"
+          style={{ color: "var(--m3-on-surface)" }}
+        >
+          OURA
+        </h1>
+      </Link>
+      <nav
+        className="mt-6 mx-auto max-w-[960px] overflow-x-auto scrollbar-thin"
+        role="navigation"
+        aria-label="Main navigation"
+      >
+        <ul className="inline-flex items-center gap-1 px-2 py-1 rounded-full bg-[var(--m3-surface-container,rgba(0,0,0,0.04))] border border-[var(--border)]">
+          {tabs.map((tab) => {
+            const active = pathname === tab.href || (tab.href === "/dashboard" && pathname === "/");
+            return (
+              <li key={tab.href}>
+                <Link
+                  href={tab.href}
+                  aria-current={active ? "page" : undefined}
+                  className={cn(
+                    "inline-flex items-center px-3.5 py-1.5 rounded-full text-[12px] font-medium tracking-wide whitespace-nowrap transition-all",
+                    active
+                      ? "bg-[var(--m3-primary,#4285f4)] text-[var(--m3-on-primary,#fff)] shadow-sm"
+                      : "text-[var(--text-secondary)] hover:bg-[var(--surface-container-high,rgba(0,0,0,0.06))] hover:text-[var(--text-primary)]"
+                  )}
+                >
+                  {tab.label}
+                </Link>
+              </li>
+            );
+          })}
+        </ul>
+      </nav>
+    </header>
+  );
+}
+
 export function DashboardShell({ children }: { children: React.ReactNode }) {
   return (
     <div className="min-h-screen bg-[var(--bg-primary)]">
       <LoadingBar />
       <ConnectionStatus />
-      <Sidebar />
-      <MobileBottomNav />
+      <BrandHeader />
       <main
         id="main-content"
-        className="lg:ml-60 p-4 pt-16 sm:p-6 sm:pt-16 lg:p-8 lg:pt-8 xl:p-10 pb-24 lg:pb-12 transition-all duration-200"
+        className="px-4 sm:px-6 lg:px-8 pb-24"
       >
-        <div className="max-w-[1400px] mx-auto">
+        <div className="max-w-[1200px] mx-auto">
           <ErrorBoundary>{children}</ErrorBoundary>
         </div>
       </main>

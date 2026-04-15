@@ -127,7 +127,7 @@ export default function SleepPage() {
 
       {data && (
         <div className="space-y-6">
-          <AISummaryCard page="sleep" data={data} />
+          <AISummaryCard page="sleep" data={data} compact />
 
           {/* Selected night overview */}
           <div className="premium-card p-6">
