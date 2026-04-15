@@ -144,10 +144,7 @@
   }
 
   .premium-card:hover {
-    @apply border-[var(--border-strong)]
-           bg-[#f4f6f9] dark:bg-[#303034];
-    box-shadow: 0 4px 16px rgba(66, 133, 244, 0.08), 0 2px 6px rgba(66, 133, 244, 0.04);
-    transform: translateY(-1px);
+    @apply border-[var(--border-strong)];
   }
 
   .dark .premium-card:hover {
@@ -564,15 +561,18 @@ body {
   border-color: var(--m3-outline) !important;
 }
 
-/* Cards — M3 surface-container-low + large radius + elevation-1 */
+/* Cards — flat M3 surface-container-low + large radius; no hover lift. */
 .glass-card, .premium-card, .elevated-card, .card, .m3-card {
   background: var(--m3-surface-container-low) !important;
   border-radius: var(--m3-shape-lg) !important;
-  box-shadow: var(--m3-elev-1) !important;
-  border-color: var(--m3-outline-variant) !important;
+  box-shadow: none !important;
+  border: 1px solid var(--m3-outline-variant) !important;
+  transform: none !important;
 }
 .glass-card:hover, .premium-card:hover {
-  box-shadow: var(--m3-elev-2) !important;
+  box-shadow: none !important;
+  transform: none !important;
+  background: var(--m3-surface-container-low) !important;
 }
 /* ================== End M3 Visible Integration =================== */
 
