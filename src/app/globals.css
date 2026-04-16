@@ -78,6 +78,12 @@
 }
 
 @layer components {
+  /* ---------- Shared page container (single source of truth for page body width) ---------- */
+  .page-container {
+    @apply mx-auto w-full px-4 md:px-6;
+    max-width: 1200px;
+  }
+
   /* ---------- Typography scale ---------- */
   .heading-page {
     @apply text-2xl font-bold tracking-tight;

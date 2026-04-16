@@ -147,7 +147,7 @@ export default function SettingsPage() {
     <DashboardShell>
       <PageHeader title="Settings" icon={Settings} iconColor="#64748b" />
 
-      <div className="max-w-2xl mx-auto space-y-10">
+      <div className="space-y-10">
         <SettingsSection
           title="Oura API"
           description="Your API key is stored securely in a server-side HTTP-only cookie."

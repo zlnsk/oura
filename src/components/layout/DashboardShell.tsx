@@ -66,7 +66,7 @@ const ConnectionStatus = memo(function ConnectionStatus() {
 function BrandHeader() {
   const pathname = usePathname();
   return (
-    <header className="hero">
+    <header className="hero page-container">
       <div className="topbar-left">
         <Link href="/dashboard" className="inline-block">
           <h1 className="m3-brand-title">Oura</h1>
@@ -103,9 +103,9 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
       <BrandHeader />
       <main
         id="main-content"
-        className="px-4 sm:px-6 lg:px-8 pb-24"
+        className="pb-24"
       >
-        <div className="max-w-[1200px] mx-auto">
+        <div className="page-container">
           <ErrorBoundary>{children}</ErrorBoundary>
         </div>
       </main>
