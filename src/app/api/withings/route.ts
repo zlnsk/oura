@@ -84,18 +84,22 @@ export async function GET(req: NextRequest) {
         path: "/",
       });
       // Persist refreshed tokens server-side (async, non-blocking).
+      // Atomic write so a crash mid-flush can't leave a half-written JSON file.
       void (async () => {
         try {
           const fs = await import("fs/promises");
           const path = await import("path");
+          const tokenFile = path.join(process.cwd(), ".withings-tokens.json");
+          const tmpFile = tokenFile + ".tmp";
           await fs.writeFile(
-            path.join(process.cwd(), ".withings-tokens.json"),
+            tmpFile,
             JSON.stringify({
               access_token: newTokens.access_token,
               refresh_token: newTokens.refresh_token,
               expires_at: Date.now() + 10800 * 1000,
             })
           );
+          await fs.rename(tmpFile, tokenFile);
         } catch (e) {
           console.warn("Failed to persist Withings tokens:", e instanceof Error ? e.message : e);
         }
