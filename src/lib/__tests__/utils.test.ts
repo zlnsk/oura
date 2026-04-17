@@ -136,12 +136,12 @@ describe("getScoreLabel", () => {
 describe("formatDate", () => {
   it("formats YYYY-MM-DD to short date", () => {
     const result = formatDate("2024-01-15");
-    expect(result).toBe("Jan 15");
+    expect(result).toBe("15 Jan");
   });
 
   it("formats another date correctly", () => {
     const result = formatDate("2024-12-25");
-    expect(result).toBe("Dec 25");
+    expect(result).toBe("25 Dec");
   });
 });
 
