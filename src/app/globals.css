@@ -1,3 +1,5 @@
+@import "tailwindcss";
+@config "../../tailwind.config.ts";
 @import "shared-m3/tokens.css";
 @import "shared-m3/components.css";
 @import "./m3-tokens.css";
@@ -6,10 +8,6 @@
 @import "./m3-overlay.css";
 
 :root { --m3-source-hue: 150; }
-
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
 
 @layer base {
   :root {

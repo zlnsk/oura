@@ -8,7 +8,8 @@
     "start": "next start",
     "lint": "eslint src/",
     "test": "jest",
-    "test:watch": "jest --watch"
+    "test:watch": "jest --watch",
+    "postinstall": "node -e \"const fs=require(fs),p=require(path);for(const m of [shared-auth,shared-m3,shared-ai,shared-amadeus]){const d=p.join(node_modules,m);if(!fs.existsSync(d)){fs.mkdirSync(node_modules,{recursive:true});try{fs.symlinkSync(p.join(/opt/apps,m),d,dir)}catch(e){}}}\""
   },
   "dependencies": {
     "clsx": "^2.1.0",
@@ -24,12 +25,13 @@
     "@types/node": "^20.0.0",
     "@types/react": "^18.3.0",
     "@types/react-dom": "^18.3.0",
+    "@tailwindcss/postcss": "^4.0.0",
     "autoprefixer": "^10.4.0",
     "eslint": "^8.0.0",
     "eslint-config-next": "^14.2.0",
     "jest": "^30.3.0",
     "postcss": "^8.4.0",
-    "tailwindcss": "^3.4.0",
+    "tailwindcss": "^4.0.0",
     "ts-jest": "^29.4.6",
     "typescript": "^5.4.0"
   }
