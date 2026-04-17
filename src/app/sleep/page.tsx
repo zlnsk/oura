@@ -43,7 +43,7 @@ function buildIntradayHR(period: SleepPeriod): { time: string; value: number }[]
     if (items[i] <= 0) continue;
     const t = new Date(start.getTime() + i * interval * 1000);
     result.push({
-      time: t.toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit", hour12: false }),
+      time: t.toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit", hour12: false }),
       value: items[i],
     });
   }
@@ -59,7 +59,7 @@ function buildIntradayHRV(period: SleepPeriod): { time: string; value: number }[
     if (items[i] <= 0) continue;
     const t = new Date(start.getTime() + i * interval * 1000);
     result.push({
-      time: t.toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit", hour12: false }),
+      time: t.toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit", hour12: false }),
       value: Math.round(items[i]),
     });
   }
@@ -160,13 +160,13 @@ export default function SleepPage() {
                     <div>
                       <p className="stat-label">Bedtime</p>
                       <p className="text-xl font-semibold mt-1">
-                        {new Date(selectedPeriod.bedtime_start).toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" })}
+                        {new Date(selectedPeriod.bedtime_start).toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit", hour12: false })}
                       </p>
                     </div>
                     <div>
                       <p className="stat-label">Wake Time</p>
                       <p className="text-xl font-semibold mt-1">
-                        {new Date(selectedPeriod.bedtime_end).toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" })}
+                        {new Date(selectedPeriod.bedtime_end).toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit", hour12: false })}
                       </p>
                     </div>
                   </>
@@ -193,9 +193,9 @@ export default function SleepPage() {
                     >
                       <div className="flex items-center justify-between">
                         <span className="text-xs text-gray-500 dark:text-gray-400">
-                          {new Date(nap.bedtime_start).toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" })}
+                          {new Date(nap.bedtime_start).toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit", hour12: false })}
                           {" — "}
-                          {new Date(nap.bedtime_end).toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" })}
+                          {new Date(nap.bedtime_end).toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit", hour12: false })}
                         </span>
                         <span className="text-xs font-medium text-indigo-500">
                           {formatDuration(nap.total_sleep_duration)}

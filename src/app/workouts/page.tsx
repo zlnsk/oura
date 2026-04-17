@@ -207,7 +207,7 @@ export default function WorkoutsPage() {
                   </div>
                   <div>
                     <h3 className="font-semibold text-sm">
-                      Today since wake ({wakeTime.toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" })}) — Workouts
+                      Today since wake ({wakeTime.toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit", hour12: false })}) — Workouts
                     </h3>
                     <p className="text-[10px] text-gray-500 dark:text-gray-400">
                       {workoutsSinceWake.length} workout{workoutsSinceWake.length > 1 ? "s" : ""} since wake
@@ -222,7 +222,7 @@ export default function WorkoutsPage() {
                           {w.activity?.replace(/_/g, " ") || "Workout"}
                         </p>
                         <p className="text-xs text-gray-400">
-                          {new Date(w.start_datetime).toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" })}
+                          {new Date(w.start_datetime).toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit", hour12: false })}
                           {" \u2014 "}
                           {formatDuration(workoutDuration(w))}
                         </p>
@@ -287,7 +287,7 @@ export default function WorkoutsPage() {
           <div className="premium-card overflow-hidden">
             <div className="p-6 border-b border-[var(--border)]">
               <h3 className="font-semibold">
-                Workouts on {new Date(selectedDate + "T12:00:00").toLocaleDateString("en-US", { month: "short", day: "numeric" })}
+                Workouts on {new Date(selectedDate + "T12:00:00").toLocaleDateString("en-GB", { day: "numeric", month: "short" })}
               </h3>
             </div>
             <div className="divide-y divide-slate-200/60 dark:divide-slate-800/40">
@@ -314,9 +314,9 @@ export default function WorkoutsPage() {
                                 {w.activity?.replace(/_/g, " ") || "Workout"}
                               </p>
                               <p className="text-xs text-gray-400">
-                                {new Date(w.start_datetime).toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" })}
+                                {new Date(w.start_datetime).toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit", hour12: false })}
                                 {" \u2014 "}
-                                {new Date(w.end_datetime).toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" })}
+                                {new Date(w.end_datetime).toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit", hour12: false })}
                               </p>
                             </div>
                           </div>
@@ -376,7 +376,7 @@ export default function WorkoutsPage() {
                           {s.type?.replace(/_/g, " ") || "Session"}
                         </p>
                         <p className="text-xs text-gray-400">
-                          {new Date(s.start_datetime).toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" })}
+                          {new Date(s.start_datetime).toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit", hour12: false })}
                         </p>
                       </div>
                     </div>

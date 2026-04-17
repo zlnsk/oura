@@ -25,9 +25,10 @@ function intervalToTimeSeries(
 
   return data.items
     .map((value, i) => ({
-      time: new Date(startTime + i * intervalMs).toLocaleTimeString("en-US", {
-        hour: "numeric",
+      time: new Date(startTime + i * intervalMs).toLocaleTimeString("en-GB", {
+        hour: "2-digit",
         minute: "2-digit",
+        hour12: false,
       }),
       value,
     }))
@@ -60,7 +61,7 @@ export function WorkoutDetail({ workout, dayActivity, dayHeartRate }: WorkoutDet
           const ts = startMs + i * intervalMs;
           return {
             ts,
-            time: new Date(ts).toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" }),
+            time: new Date(ts).toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit", hour12: false }),
             value,
           };
         })
@@ -75,7 +76,7 @@ export function WorkoutDetail({ workout, dayActivity, dayHeartRate }: WorkoutDet
       })
       .map((hr) => ({
         ts: new Date(hr.timestamp).getTime(),
-        time: new Date(hr.timestamp).toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" }),
+        time: new Date(hr.timestamp).toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit", hour12: false }),
         value: hr.bpm,
       }));
   }, [workout.heart_rate, dayHeartRate, workoutStartMs, workoutEndMs]);
@@ -116,7 +117,7 @@ export function WorkoutDetail({ workout, dayActivity, dayHeartRate }: WorkoutDet
       metDataWithTs.map((d) => ({
         time:
           d.time ||
-          new Date(d.ts).toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" }),
+          new Date(d.ts).toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit", hour12: false }),
         value: d.value,
       })),
     [metDataWithTs]

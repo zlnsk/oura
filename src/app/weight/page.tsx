@@ -174,7 +174,7 @@ export default function WeightPage() {
                   </div>
                   <div>
                     <h3 className="font-semibold text-sm">
-                      Today since wake ({wakeTime.toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" })}) — Measurements
+                      Today since wake ({wakeTime.toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit", hour12: false })}) — Measurements
                     </h3>
                     <p className="text-[10px] text-gray-500 dark:text-gray-400">
                       {measurementsSinceWake.length} measurement{measurementsSinceWake.length > 1 ? "s" : ""} since wake
@@ -185,7 +185,7 @@ export default function WeightPage() {
                   {measurementsSinceWake.map((m) => (
                     <div key={m.timestamp} className="flex flex-wrap items-center gap-6 p-3 rounded-xl inset-cell">
                       <div className="text-xs text-gray-500">
-                        {new Date(m.timestamp).toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" })}
+                        {new Date(m.timestamp).toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit", hour12: false })}
                       </div>
                       <div>
                         <span className="text-lg font-bold text-teal-600 dark:text-teal-400">{formatWeight(m.weight)}</span>

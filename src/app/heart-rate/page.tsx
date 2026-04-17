@@ -84,7 +84,7 @@ export default function HeartRatePage() {
       if (wakeTs && ts < wakeTs) continue;
       if (ts > endTs) continue;
       points.push({
-        time: t.toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit", hour12: false }),
+        time: t.toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit", hour12: false }),
         value: hr.bpm,
         ts,
       });
@@ -144,7 +144,7 @@ export default function HeartRatePage() {
               <Suspense fallback={<ChartSkeleton />}>
                 <IntradayChart
                   data={intradayHRSinceWake}
-                  title={`Since wake (${wakeTime.toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" })}) — Heart Rate`}
+                  title={`Since wake (${wakeTime.toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit", hour12: false })}) — Heart Rate`}
                   color={COLORS.heartRate}
                   unit=" bpm"
                   gradientId="hrSinceWakeGrad"

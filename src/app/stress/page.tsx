@@ -78,7 +78,7 @@ export default function StressPage() {
         if (wakeTs && ts < wakeTs) continue;
         if (ts > endTs) continue;
         points.push({
-          time: t.toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit", hour12: false }),
+          time: t.toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit", hour12: false }),
           value: Math.round(v * 10) / 10,
           ts,
         });
@@ -121,7 +121,7 @@ export default function StressPage() {
               <Suspense fallback={<ChartSkeleton />}>
                 <IntradayChart
                   data={intradayStressSinceWake}
-                  title={`Since wake (${wakeTime.toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" })}) — Stress Level`}
+                  title={`Since wake (${wakeTime.toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit", hour12: false })}) — Stress Level`}
                   color={COLORS.attention}
                   gradientId="stressSinceWakeGrad"
                 />

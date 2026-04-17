@@ -57,7 +57,7 @@ function formatDisplayDate(dateStr: string): string {
   const yesterdayStr = `${yesterday.getFullYear()}-${String(yesterday.getMonth() + 1).padStart(2, "0")}-${String(yesterday.getDate()).padStart(2, "0")}`;
   if (dateStr === yesterdayStr) return "Yesterday";
 
-  return d.toLocaleDateString("en-US", { weekday: "short", month: "short", day: "numeric" });
+  return d.toLocaleDateString("en-GB", { weekday: "short", day: "numeric", month: "short" });
 }
 
 function daysBetween(dateStr: string, todayStr: string): number {

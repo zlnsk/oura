@@ -75,7 +75,7 @@ export default function ActivityPage() {
         const t = new Date(hr.timestamp);
         if (wakeTs && t.getTime() < wakeTs) continue;
         if (t.getTime() > endTs) continue;
-        const timeLabel = t.toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit", hour12: false });
+        const timeLabel = t.toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit", hour12: false });
         const existing = timeMap.get(timeLabel);
         if (existing) {
           existing.hr = hr.bpm;
@@ -94,7 +94,7 @@ export default function ActivityPage() {
         const t = new Date(start.getTime() + i * interval * 1000);
         if (wakeTs && t.getTime() < wakeTs) continue;
         if (t.getTime() > endTs) continue;
-        const timeLabel = t.toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit", hour12: false });
+        const timeLabel = t.toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit", hour12: false });
         const val = Math.round(items[i] * 10) / 10;
         const existing = timeMap.get(timeLabel);
         if (existing) {
@@ -189,7 +189,7 @@ export default function ActivityPage() {
           {combinedIntradayData.length > 0 && (
             <DualIntradayChart
               data={combinedIntradayData}
-              title={wakeTime ? `Heart Rate & MET (since ${wakeTime.toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" })})` : "Heart Rate & MET"}
+              title={wakeTime ? `Heart Rate & MET (since ${wakeTime.toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit", hour12: false })})` : "Heart Rate & MET"}
             />
           )}
 

@@ -113,7 +113,7 @@ export default function DashboardPage() {
   }, [data?.sleepPeriods, selectedDate, prevDate]);
 
   const wakeTimeLabel = useMemo(() => {
-    return wakeTime ? wakeTime.toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" }) : null;
+    return wakeTime ? wakeTime.toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit", hour12: false }) : null;
   }, [wakeTime]);
 
   const combinedIntradayData = useMemo(() => {
@@ -131,7 +131,7 @@ export default function DashboardPage() {
         const t = new Date(hr.timestamp);
         if (wakeTs && t.getTime() < wakeTs) continue;
         if (t.getTime() > endTs) continue;
-        const timeLabel = t.toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit", hour12: false });
+        const timeLabel = t.toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit", hour12: false });
         const existing = timeMap.get(timeLabel);
         if (existing) {
           existing.hr = hr.bpm;
@@ -149,7 +149,7 @@ export default function DashboardPage() {
         const t = new Date(start.getTime() + i * interval * 1000);
         if (wakeTs && t.getTime() < wakeTs) continue;
         if (t.getTime() > endTs) continue;
-        const timeLabel = t.toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit", hour12: false });
+        const timeLabel = t.toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit", hour12: false });
         const val = Math.round(items[i] * 10) / 10;
         const existing = timeMap.get(timeLabel);
         if (existing) {
@@ -189,7 +189,7 @@ export default function DashboardPage() {
     [data]
   );
 
-  const dateLabel = new Date(selectedDate + "T12:00:00").toLocaleDateString("en-US", {
+  const dateLabel = new Date(selectedDate + "T12:00:00").toLocaleDateString("en-GB", {
     weekday: "long",
     month: "long",
     day: "numeric",
@@ -209,7 +209,7 @@ export default function DashboardPage() {
             <DateNavigator selectedDate={selectedDate} onDateChange={setSelectedDate} />
             {lastUpdated && (
               <span className="text-[10px] text-[var(--m3-on-surface-variant)] hidden sm:block">
-                Updated {new Date(lastUpdated).toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" })}
+                Updated {new Date(lastUpdated).toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit", hour12: false })}
               </span>
             )}
             <button

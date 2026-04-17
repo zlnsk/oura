@@ -350,7 +350,7 @@ function formatSleepDetails(
 function timeContext(): string {
   const now = new Date();
   const hours = now.getHours();
-  const timeStr = now.toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit", hour12: true });
+  const timeStr = now.toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit", hour12: false });
   const dayPart = hours < 12 ? "morning" : hours < 17 ? "afternoon" : "evening";
   return `Current time: ${timeStr} (${dayPart}). When analyzing today's data, note the day is still in progress — do not judge incomplete daily totals as "low" or concerning.`;
 }

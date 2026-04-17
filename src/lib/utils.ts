@@ -44,7 +44,7 @@ export function getScoreLabel(score: number): string {
 
 export function formatDate(dateStr: string): string {
   const d = new Date(dateStr + "T00:00:00");
-  return d.toLocaleDateString("en-US", {
+  return d.toLocaleDateString("en-GB", {
     month: "short",
     day: "numeric",
   });
@@ -52,7 +52,7 @@ export function formatDate(dateStr: string): string {
 
 export function formatFullDate(dateStr: string): string {
   const d = new Date(dateStr + "T00:00:00");
-  return d.toLocaleDateString("en-US", {
+  return d.toLocaleDateString("en-GB", {
     weekday: "short",
     month: "short",
     day: "numeric",
