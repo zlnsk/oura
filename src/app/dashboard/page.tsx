@@ -231,7 +231,7 @@ export default function DashboardPage() {
 
       {data && (
         <div className="space-y-8">
-          {/* Score rings — 2-col responsive */}
+          {/* Score rings — 3-col on md+ so three score cards fill the row uniformly */}
           <section aria-labelledby="scores-heading" className="space-y-4">
             <h2
               id="scores-heading"
@@ -239,7 +239,7 @@ export default function DashboardPage() {
             >
               Today
             </h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               {todaySleep && todaySleep.score > 0 && (
                 <ScoreCard
                   label="Sleep"
