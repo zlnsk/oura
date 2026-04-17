@@ -131,12 +131,15 @@ export async function GET(req: NextRequest) {
       "Withings API error:",
       error instanceof Error ? error.message : "Unknown"
     );
+    // Refresh failed or original error unrelated to auth: signal client to reconnect.
+    // Use 401 so the client can distinguish auth-needs-attention from a genuine 500.
     return NextResponse.json(
       {
         error:
           "Failed to fetch data from Withings. Please reconnect your Withings account in Settings.",
+        code: "reconnect_required",
       },
-      { status: 500 }
+      { status: 401 }
     );
   }
 }

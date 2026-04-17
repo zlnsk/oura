@@ -64,6 +64,5 @@ const nextConfig = {
   },
 };
 
-nextConfig.eslint={ignoreDuringBuilds:true};
 nextConfig.typescript={ignoreBuildErrors:true};
 module.exports = nextConfig;
