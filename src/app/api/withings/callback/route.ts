@@ -54,10 +54,10 @@ export async function GET(req: NextRequest) {
     }
 
     const result = await response.json();
-    console.log("Withings token exchange result:", JSON.stringify(result));
 
     if (result.status !== 0) {
-      console.error("Withings token exchange API error:", result.status, result.error);
+      // Don't log result.error verbatim in case upstream echoes secrets back.
+      console.error("Withings token exchange API error, status:", result.status);
       return redirectToSettings(req, "token_error");
     }
 
@@ -68,15 +68,18 @@ export async function GET(req: NextRequest) {
       return redirectToSettings(req, "token_error");
     }
 
-    // Store tokens server-side for cross-browser persistence
+    // Store tokens server-side for cross-browser persistence.
+    // Use a temp file + atomic rename so a crash mid-write never leaves a
+    // partially-written JSON blob that the read path would silently ignore.
     const fs = await import("fs/promises");
     const path = await import("path");
     const tokenFile = path.join(process.cwd(), ".withings-tokens.json");
-    await fs.writeFile(tokenFile, JSON.stringify({
+    const tmpFile = tokenFile + ".tmp";
+    await fs.writeFile(tmpFile, JSON.stringify({
       access_token, refresh_token, userid: result.body.userid,
       expires_at: Date.now() + (result.body.expires_in || 10800) * 1000,
     }));
-    console.log("Withings tokens saved to", tokenFile);
+    await fs.rename(tmpFile, tokenFile);
 
     // Store tokens in secure cookies (browser-specific fallback)
     const res = redirectToSettings(req, "success");
