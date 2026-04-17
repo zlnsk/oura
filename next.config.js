@@ -14,7 +14,7 @@ function getBuildVersion() {
 
 /** @type {import("next").NextConfig} */
 const nextConfig = {
-  serverExternalPackages: ["shared-auth"],
+  serverExternalPackages: ["shared-auth", "shared-ai"],
   basePath: "/Oura",
   env: {
     NEXT_PUBLIC_BUILD_VERSION: getBuildVersion(),

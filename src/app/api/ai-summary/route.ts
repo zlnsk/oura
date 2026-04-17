@@ -170,33 +170,21 @@ export async function POST(req: NextRequest) {
   const prompt = buildPrompt(data, pageType);
 
   try {
-    const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": `Bearer ${OPENROUTER_API_KEY}`,
-        "X-Title": "Oura", "HTTP-Referer": process.env.NEXT_PUBLIC_APP_URL || "",
-      },
-      body: JSON.stringify({
+    let text: string;
+    try {
+      const { chatText } = require("shared-ai");
+      text = await chatText({
+        apiKey: OPENROUTER_API_KEY,
         model: "openrouter/auto",
-        max_tokens: 512,
-        messages: [
-          {
-            role: "user",
-            content: prompt,
-          },
-        ],
-      }),
-    });
-
-    if (!response.ok) {
-      const status = response.status;
-      console.error(`OpenRouter API error: ${status}`);
+        maxTokens: 512,
+        appName: "Oura",
+        referer: process.env.NEXT_PUBLIC_APP_URL || "",
+        messages: [{ role: "user", content: prompt }],
+      });
+    } catch (err: any) {
+      console.error(`OpenRouter API error: ${err?.message || err}`);
       throw new Error("Failed to generate summary");
     }
-
-    const result = await response.json();
-    const text = result.choices?.[0]?.message?.content || "{}";
 
     const rateLimitHeaders = {
       "X-RateLimit-Limit": String(AI_DAILY_LIMIT),
